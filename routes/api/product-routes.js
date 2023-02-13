@@ -10,13 +10,38 @@ router.get('/', (req, res) => {
 });
 
 // get one product
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  try{
+  const dbProductData = await Product.findOne(req.params.id, {
+    include: [{model: Category}]
+  });
+  
+  if (!dbProductData) {
+    res.status(404).json({ message : 'no category found'});   
+  }
+  res.status(200).json(dbProductData);
+} catch(err){
+  res.status(500).json(err);
+}
+
 });
 
 // create new product
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+  try {
+    const dbNewProduct = await Product.create({
+      product_name: req.body.product_name,
+      price: req.body.price,
+      stock: req.body.stock,
+      tagIds: req.body.tagIds
+    })
+    res.status(200).json(dbNewProduct); 
+  } catch(err) {
+    res.status(400).json(err);
+  }
+  
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -89,8 +114,24 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete one product by its `id` value
+  try {
+    const dbProductData = await Product.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!dbCategoryData) {
+      res.status(404).json({ message: 'No product found with that id!' });
+      return;
+    }
+
+    res.status(200).json(dbProductData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
