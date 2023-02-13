@@ -7,11 +7,8 @@ router.get('/', async (req, res) => {
   // find all categories
   try{
   const dbCategoryData =  await Category.findAll({
-    attributes: ['id', 'category_name'],
-    include: [{
-      models: Product,
-      attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
-    }]
+    //attributes: ['id', 'category_name'],
+    include: [{model: Product,}]
   })
   res.status(200).json(dbCategoryData)
   }catch(err){

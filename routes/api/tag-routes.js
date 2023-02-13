@@ -9,12 +9,7 @@ router.get('/', async (req, res) => {
   try{
     const dbTagData =  await Tag.findAll({
       attributes: ['id', 'category_name'],
-      include: [{
-        models: Product,
-        attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
-        models: ProductTag,
-        attributes : ['id', 'product_id', 'tag_id']
-      }]
+      include: [{models: Product, ProductTag,}]
     })
     res.status(200).json(dbTagData)
     }catch(err){
